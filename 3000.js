@@ -6,60 +6,57 @@ function main(input) {
     var n = 0;
     var g = 0;
 
-    // create a graph class 
-    class Graph {
+    // create a graph class
+    function Graph(noOfVertices) {
+        this.noOfVertices = noOfVertices;
+        this.AdjList = new Map();
+    }
 
-        constructor(noOfVertices) {
-            this.noOfVertices = noOfVertices;
-            this.AdjList = new Map();
+    Graph.prototype.trainsGo = function () {//search and count relevant neighbors
+        var get_keys = this.AdjList.keys();
+        var string = "";
+        for (var i of get_keys) {
+            var x = g.dfs(i, k);
+            string = string.concat(x + 1).concat("\n");
         }
+        string = string.substr(0, string.length - 1);
+        return string.toString();
+    }
 
-        trainsGo(){//search and count relevant neighbors
-            var get_keys = this.AdjList.keys();
-            var string = "";
-            for (var i of get_keys) {
-                var x = g.dfs(i, k);
-                string=string.concat(x+1).concat("\n");
-            }
-            string = string.substr(0, string.length - 1);
-            return string.toString();
-        }
+    Graph.prototype.addVertex = function (v) {
+        // initialize the adjacent list with a 
+        // null array 
+        this.AdjList.set(v, []);
+    }
 
-        addVertex(v) {
-            // initialize the adjacent list with a 
-            // null array 
-            this.AdjList.set(v, []);
-        }
+    Graph.prototype.addEdge = function (v, w) {
+        // get the list for vertex v and put the 
+        // vertex w denoting edge between v and w 
+        this.AdjList.get(v).push(w);
+    }
 
-        addEdge(v, w) {
-            // get the list for vertex v and put the 
-            // vertex w denoting edge between v and w 
-            this.AdjList.get(v).push(w);
-        }
+    Graph.prototype.dfs = function (startingNode, k) { //searching for neighbors and counting using dfs style
 
-        dfs(startingNode, k) { //searching for neighbors and counting using dfs style
+        var get_keys = this.AdjList.keys();
+        var reachableStations = 0;
+        for (var i of get_keys) {
 
-            var get_keys = this.AdjList.keys();
-            var reachableStations = 0;
-            for (var i of get_keys) {
+            var get_neighbours = this.AdjList.get(i);
 
-                var get_neighbours = this.AdjList.get(i);
+            if (i != startingNode) {
+                var legs = 0;
+                while (legs < k && get_neighbours != i) {
 
-                if (i != startingNode) {
-                    var legs = 0;
-                    while (legs < k && get_neighbours != i) {
-
-                        if(get_neighbours[0] == startingNode){
-                            reachableStations = reachableStations + 1;
-                        }
-                        legs = legs + 1;
-                        get_neighbours = this.AdjList.get(get_neighbours[0]);
+                    if (get_neighbours[0] == startingNode) {
+                        reachableStations = reachableStations + 1;
                     }
+                    legs = legs + 1;
+                    get_neighbours = this.AdjList.get(get_neighbours[0]);
                 }
             }
-
-            return reachableStations;
         }
+
+        return reachableStations;
     }
 
     arrayOfLines = input.split("\n");
